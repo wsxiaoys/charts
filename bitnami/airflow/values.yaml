@@ -1,373 +1,249 @@
-## Global Docker image parameters
-## Please, note that this will override the image parameters, including dependencies, configured to use the global value
-## Current available global Docker image parameters: imageRegistry and imagePullSecrets
-##
-# global:
-#   imageRegistry: myRegistryName
-#   imagePullSecrets:
-#     - myRegistryKeySecretName
-#   storageClass: myStorageClass
-
-## Bitnami Airflow image version
-## ref: https://hub.docker.com/r/bitnami/airflow/tags/
-##
-image:
-  registry: docker.io
-  repository: bitnami/airflow
-  tag: 1.10.6-debian-9-r0
-  ## Specify a imagePullPolicy
-  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
-  pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  # pullSecrets:
-  #   - myRegistryKeySecretName
-
-  ## Set to true if you would like to see extra information on logs
-  ## It turns BASH and NAMI debugging in minideb
-  ## ref:  https://github.com/bitnami/minideb-extras/#turn-on-bash-debugging
-  debug: false
-
-## Bitnami Airflow Scheduler image version
-## ref: https://hub.docker.com/r/bitnami/airflow-scheduler/tags/
-##
-schedulerImage:
-  registry: docker.io
-  repository: bitnami/airflow-scheduler
-  tag: 1.10.6-debian-9-r1
-  ## Specify a imagePullPolicy
-  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
-  pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  # pullSecrets:
-  #   - myRegistryKeySecretName
-
-  ## Set to true if you would like to see extra information on logs
-  ## It turns BASH and NAMI debugging in minideb
-  ## ref:  https://github.com/bitnami/minideb-extras/#turn-on-bash-debugging
-  debug: false
-
-## Bitnami Airflow Worker image version
-## ref: https://hub.docker.com/r/bitnami/airflow-worker/tags/
-##
-workerImage:
-  registry: docker.io
-  repository: bitnami/airflow-worker
-  tag: 1.10.6-debian-9-r1
-  ## Specify a imagePullPolicy
-  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
-  pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  # pullSecrets:
-  #   - myRegistryKeySecretName
-
-  ## Set to true if you would like to see extra information on logs
-  ## It turns BASH and NAMI debugging in minideb
-  ## ref:  https://github.com/bitnami/minideb-extras/#turn-on-bash-debugging
-  debug: false
-
-## Bitnami git image version
-## ref: https://hub.docker.com/r/bitnami/git/tags/
-##
-git:
-  registry: docker.io
-  repository: bitnami/git
-  tag: 2.24.0-debian-9-r10
-  pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  # pullSecrets:
-  #   - myRegistryKeySecretName
-
-## String to partially override airflow.fullname template (will maintain the release name)
-##
-# nameOverride:
-
-## String to fully override airflow.fullname template
-##
-# fullnameOverride:
-
-## StatefulSet controller supports automated updates. There are two valid update strategies: RollingUpdate and OnDelete
-## ref: https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets
-##
-updateStrategy: RollingUpdate
-
-## Partition update strategy
-## https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions
-##
-# rollingUpdatePartition:
-
-## Airflow Components configuration
-##
-airflow:
-  ## Name of an existing config map containing the Airflow config file
-  ##
-  # configurationConfigMap:
-  ## Name of an existing config map containing all the DAGs files you want to load in Airflow.
-  ##
-  ## dagsConfigMap:
-  ## Airflow generic configuration
-  ##
-  loadExamples: false
-  ## Enable in order to download DAG files from git repository.
-  ##
-  cloneDagFilesFromGit:
-    enabled: false
-    # repository:
-    # branch:
-    # interval:
-  ## URL used to access to airflow web ui
-  ##
-  # baseUrl:
-  ## Airflow worker component configuration
-  worker:
-    port: 8793
-    replicas: 1
-
-  ## All the parameters from the configuration file can be overwritten by using environment variables with this format:
-  ## AIRFLOW__{SECTION}__{KEY}. Note the double underscores. More info at https://airflow.readthedocs.io/en/stable/howto/set-config.html
-  ##
-  # extraEnvVars:
-  #   - name: AIRFLOW__SMTP__SMTP_HOST
-  #     value: "localhost"
-  #   - name: AIRFLOW__SMTP__SMTP_PORT
-  #     value: "25"
-  #   - name: AIRFLOW__SMTP__USER
-  #     value: ""
-
-  auth:
-    ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
-    ## If it is not forced, a random password will be generated.
-    ##
-    forcePassword: false
-    ## Specify username to acccess web UI
-    ##
-    username: user
-    ## Specify password to acccess web UI
-    ##
-    # password:
-    ## Specify a fernet key to secure airflow connections
-    ## Fernet key must be 32 url-safe base64-encoded bytes.
-    ## More info at:
-    ## - https://airflow.readthedocs.io/en/stable/howto/secure-connections.html
-    ## - https://bcb.github.io/airflow/fernet-key
-    ##
-    # fernetKey:
-    ## Use existing secret (ignores previous password and fernetKey)
-    ##
-    # existingSecret:
-
-## Kubernetes Security Context
-## https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-##
-securityContext:
-  enabled: true
-  fsGroup: 1001
-  runAsUser: 1001
-
-## Kubernetes configuration
-## For minikube, set this to NodePort, elsewhere use LoadBalancer
-##
-service:
-  type: ClusterIP
-  port: 8080
-
-  ## Specify the NodePort value for the LoadBalancer and NodePort service types.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  ##
-  # nodePort:
-
-  ## Use loadBalancerIP to request a specific static IP,
-  # loadBalancerIP:
-
-  ## Service annotations done as key:value pairs
-  annotations:
-
-## Configure the ingress resource that allows you to access the
-## Airflow installation. Set up the URL
-## ref: http://kubernetes.io/docs/user-guide/ingress/
-##
-ingress:
-  ## Set to true to enable ingress record generation
-  enabled: false
-
-  ## Set this to true in order to add the corresponding annotations for cert-manager
-  certManager: false
-
-  ## Ingress annotations done as key:value pairs
-  ## For a full list of possible ingress annotations, please see
-  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
-  ##
-  ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
-  ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-  annotations:
-  #  kubernetes.io/ingress.class: nginx
-
-  ## The list of hostnames to be covered with this ingress record.
-  ## Most likely this will be just one host, but in the event more hosts are needed, this is an array
-  ##
-  hosts:
-    - name: airflow.local
-      path: /
-      ## Set this to true in order to enable TLS on the ingress record
-      tls: false
-
-      ## Optionally specify the TLS hosts for the ingress record
-      ## Useful when the Ingress controller supports www-redirection
-      ## If not specified, the above host name will be used
-      # tlsHosts:
-      # - www.airflow.local
-      # - airflow.local
-
-      ## If TLS is set to true, you must declare what secret will store the key/certificate for TLS
-      tlsSecret: airflow.local-tls
-
-  secrets:
-  ## If you're providing your own certificates, please use this to add the certificates as secrets
-  ## key and certificate should start with -----BEGIN CERTIFICATE----- or
-  ## -----BEGIN RSA PRIVATE KEY-----
-  ##
-  ## name should line up with a tlsSecret set further up
-  ## If you're using cert-manager, this is unneeded, as it will create the secret for you if it is not set
-  ##
-  ## It is also possible to create and manage the certificates outside of this helm chart
-  ## Please see README.md for more information
-  # - name: airflow.local-tls
-  #   key:
-  #   certificate:
-
-## Node labels for pod assignment
-## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-##
-nodeSelector: {}
-
-## Tolerations for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
-tolerations: []
-
-## Affinity for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-##
-affinity: {}
-
-## Configure resource requests and limits
-## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-##
-resources:
-#  limits:
-#    cpu: 200m
-#    memory: 1Gi
-#  requests:
-#    memory: 256Mi
-#    cpu: 250m
-
-## Configure extra options for liveness and readiness probes
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
-livenessProbe:
-  enabled: true
-  initialDelaySeconds: 180
-  periodSeconds: 20
-  timeoutSeconds: 5
-  failureThreshold: 6
-  successThreshold: 1
-
-readinessProbe:
-  enabled: true
-  initialDelaySeconds: 30
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 6
-  successThreshold: 1
-
-##
-## PostgreSQL chart configuration
-##
-## https://github.com/helm/charts/blob/master/stable/postgresql/values.yaml
-##
-postgresql:
-  enabled: true
-  postgresqlUsername: bn_airflow
-  # postgresqlPassword:
-  postgresqlDatabase: bitnami_airflow
-
-externalDatabase:
-  ## All of these values are only used when postgresql.enabled is set to false
-  ## Database host
-  host: localhost
-  ## non-root Username for Airflow Database
-  user: bn_airflow
-  ## Database password
-  password: ""
-  ## Database name
-  database: bitnami_airflow
-  ## Database port number
-  port: 5432
-
-##
-## Redis chart configuration
-##
-## https://github.com/helm/charts/blob/master/stable/redis/values.yaml
-##
-redis:
-  enabled: true
-  # password: ""
-
-externalRedis:
-  ## All of these values are only used when redis.enabled is set to false
-  ## Redis host
-  host: localhost
-  ## Redis port number
-  port: 6379
-  ## Redis password
-  password: ""
-
-## Prometheus Exporter / Metrics
-##
-metrics:
-  enabled: false
-
-  image:
-    registry: docker.io
-    repository: bitnami/airflow-exporter
-    tag: 0.20180711.0-debian-9-r94
-    pullPolicy: IfNotPresent
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ##
-    # pullSecrets:
-    #   - myRegistryKeySecretName
-
-  ## Metrics exporter resource requests and limits
-  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-  ##
-  # resources: {}
-
-  ## Metrics exporter labels and tolerations for pod assignment
-  # nodeSelector: {"beta.kubernetes.io/arch": "amd64"}
-  # tolerations: []
-
-  ## Metrics exporter pod Annotation and Labels
-  # podLabels: {}
-
-  podAnnotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9112"
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "airflow.fullname" . }}-web
+  labels:
+    app.kubernetes.io/name: {{ include "airflow.name" . }}
+    helm.sh/chart: {{ include "airflow.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: web
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "airflow.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: web
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "airflow.name" . }}
+        helm.sh/chart: {{ include "airflow.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: web
+    {{- if .Values.podAnnotations }}
+      annotations:
+      {{ toYaml .Values.podAnnotations | nindent 8 }}
+    {{- end }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end -}}
+    {{- with .Values.affinity }}
+      affinity:
+      {{ toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+      {{ toYaml . | nindent 8 }}
+    {{- end }}
+    spec:
+      {{- include "airflow.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.securityContext.enabled }}
+      securityContext:
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+      {{- end }}
+      {{- if .Values.airflow.cloneDagFilesFromGit.enabled }}
+      initContainers:
+        - name: git-clone-repository
+          image: "{{ template "git.image" . }}"
+          imagePullPolicy: {{ .Values.git.pullPolicy | quote }}
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              git clone {{ .Values.airflow.cloneDagFilesFromGit.repository }} --branch {{ .Values.airflow.cloneDagFilesFromGit.branch }} /dags
+          volumeMounts:
+            - name: git-cloned-dag-files
+              mountPath: /dags
+      containers:
+        - name: git-repo-syncer
+          image: "{{ template "git.image" . }}"
+          imagePullPolicy: {{ .Values.git.pullPolicy | quote }}
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              while true; do
+                  cd /dags && git pull origin {{ .Values.airflow.cloneDagFilesFromGit.branch }}
+                  sleep {{ default "60" .Values.airflow.cloneDagFilesFromGit.interval }}
+              done
+          volumeMounts:
+            - name: git-cloned-dag-files
+              mountPath: /dags
+      {{- else }}
+      containers:
+      {{- end }}
+        - name: airflow-web
+          image: {{ template "airflow.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          env:
+            {{- if .Values.image.debug }}
+            - name: BASH_DEBUG
+              value: "1"
+            - name: NAMI_DEBUG
+              value: "1"
+            - name: NAMI_LOG_LEVEL
+              value: "trace8"
+            {{- end }}
+            - name: AIRFLOW_DATABASE_NAME
+              {{- if .Values.postgresql.enabled }}
+              value: {{ .Values.postgresql.postgresqlDatabase }}
+              {{- else }}
+              value: {{ .Values.externalDatabase.database | quote }}
+              {{- end }}
+            - name: AIRFLOW_DATABASE_USERNAME
+              {{- if .Values.postgresql.enabled }}
+              value: {{ .Values.postgresql.postgresqlUsername }}
+              {{- else }}
+              value: {{ .Values.externalDatabase.user | quote }}
+              {{- end }}
+            - name: AIRFLOW_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                {{- if .Values.postgresql.enabled }}
+                  name: {{ template "airflow.postgresql.fullname" . }}
+                  key: postgresql-password
+                {{- else }}
+                  name: {{ printf "%s-%s" .Release.Name "externaldb" }}
+                  key: db-password
+                {{- end }}
+            - name: AIRFLOW_DATABASE_HOST
+              {{- if .Values.postgresql.enabled }}
+              value: {{ template "airflow.postgresql.fullname" . }}
+              {{- else }}
+              value: {{ .Values.externalDatabase.host | quote }}
+              {{- end }}
+            - name: AIRFLOW_DATABASE_PORT_NUMBER
+              {{- if .Values.postgresql.enabled }}
+              value: "5432"
+              {{- else }}
+              value: {{ .Values.externalDatabase.port | quote }}
+              {{- end }}
+            - name: REDIS_HOST
+              {{- if .Values.redis.enabled }}
+              value: {{ template "airflow.redis.fullname" . }}
+              {{- else }}
+              value: {{ .Values.externalRedis.host | quote }}
+              {{- end }}
+            - name: REDIS_PORT_NUMBER
+              {{- if .Values.redis.enabled }}
+              value: "6379"
+              {{- else }}
+              value: {{ .Values.externalRedis.port | quote }}
+              {{- end }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                {{- if .Values.redis.enabled }}
+                  name: {{ template "airflow.redis.secretName" . }}
+                  key: redis-password
+                {{- else }}
+                  name: {{ printf "%s-%s" .Release.Name "externalredis" }}
+                  key: redis-password
+                {{- end }}
+            - name: AIRFLOW_EXECUTOR
+              value: "CeleryExecutor"
+            - name: AIRFLOW_USERNAME
+              value: {{ .Values.airflow.auth.username }}
+            - name: AIRFLOW_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.airflow.auth.existingSecret }}{{ .Values.airflow.auth.existingSecret }}{{ else }}{{ template "airflow.fullname" . }}{{ end }}
+                  key: airflow-password
+            - name: AIRFLOW_FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ if .Values.airflow.auth.existingSecret }}{{ .Values.airflow.auth.existingSecret }}{{ else }}{{ template "airflow.fullname" . }}{{ end }}
+                  key: airflow-fernetKey
+            - name: AIRFLOW_WEBSERVER_HOST
+              value: {{ template "airflow.fullname" . }}
+              {{- if .Values.airflow.baseUrl }}
+            - name: AIRFLOW_BASE_URL
+              value: {{ .Values.airflow.baseUrl }}
+              {{- end }}
+            - name: AIRFLOW_LOAD_EXAMPLES
+              {{- if .Values.airflow.loadExamples }}
+              value: "yes"
+              {{- else }}
+              value: "no"
+              {{- end }}
+            {{- if .Values.airflow.extraEnvVars }}
+              {{- toYaml .Values.airflow.extraEnvVars | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+        {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+        {{- end }}
+        {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+        {{- end }}
+          volumeMounts:
+            {{- if .Files.Glob "files/dags/*.py" }}
+            - name: local-dag-files
+              mountPath: /opt/bitnami/airflow/dags/local
+            {{- end }}
+            {{- if .Values.airflow.dagsConfigMap }}
+            - name: external-dag-files
+              mountPath: /opt/bitnami/airflow/dags/external
+            {{- end }}
+            {{- if .Values.airflow.cloneDagFilesFromGit.enabled }}
+            - name: git-cloned-dag-files
+              mountPath: /opt/bitnami/airflow/dags/git
+            {{- end }}
+            {{- if .Values.airflow.configurationConfigMap }}
+            - name: custom-configuration-file
+              mountPath: /opt/bitnami/airflow/airflow.cfg
+              subPath: airflow.cfg
+            {{- end }}
+            {{- if .Values.airflow.webserverConfigMap}}
+            - name: custom-webserver-configuration-file
+              mountPath: /opt/bitnami/airflow/webserver_config.py
+              subPath: webserver_config.py
+            {{- end }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        {{- if .Files.Glob "files/dags/*.py" }}
+        - name: local-dag-files
+          configMap:
+            name: {{ template "airflow.fullname" . }}-dag-files
+        {{- end }}
+        {{- if .Values.airflow.dagsConfigMap }}
+        - name: external-dag-files
+          configMap:
+            name: {{ .Values.airflow.dagsConfigMap }}
+        {{- end }}
+        {{- if .Values.airflow.cloneDagFilesFromGit.enabled }}
+        - name: git-cloned-dag-files
+          emptyDir: {}
+        {{- end }}
+        {{- if .Values.airflow.configurationConfigMap }}
+        - name: custom-configuration-file
+          configMap:
+            name: {{ .Values.airflow.configurationConfigMap }}
+        {{- end }}
+        {{- if .Values.airflow.webserverConfigMap }}
+        - name: custom-webserver-configuration-file
+          configMap:
+            name: {{ .Values.airflow.webserverConfigMap }}
+        {{- end }}
